@@ -89,6 +89,7 @@ import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { formatSkuDisplay } from '../utils/sku'
+import { money } from '../utils/format'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -100,10 +101,6 @@ const showCartLoading = useDelayedBusy(() => cart.loading)
 const selectedItems = computed(() => cart.items.filter((item) => item.selected && item.available))
 const selectedIds = computed(() => selectedItems.value.map((item) => item.id))
 const selectedKindCount = computed(() => selectedItems.value.length)
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 function itemSku(item) {
   return formatSkuDisplay(item)

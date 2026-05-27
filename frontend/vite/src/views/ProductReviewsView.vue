@@ -87,6 +87,8 @@ import { apiErrorMessage, mediaUrl } from '../api/http'
 import { getProductDetail, getProductReviewEligibility, likeReview, listProductReviews, unlikeReview } from '../api/products'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
+import { displayReviewName } from '../utils/format'
+import { stars } from '../utils/rating'
 import { formatReviewTime } from '../utils/date'
 import FloatingFeedback from '../components/layout/FloatingFeedback.vue'
 
@@ -128,15 +130,6 @@ function safeBackTarget() {
   return '/search'
 }
 
-function stars(rating) {
-  const score = Math.max(0, Math.min(5, Number(rating || 0)))
-  return `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`
-}
-
-function displayReviewName(review) {
-  const name = review?.buyer_nickname || review?.buyer_username || '买家'
-  return name.length > 12 ? `${name.slice(0, 12)}*` : name
-}
 
 function reviewMeta(review) {
   return formatReviewTime(review?.created_at)

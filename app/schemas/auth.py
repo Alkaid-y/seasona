@@ -54,6 +54,16 @@ def _validate_username(value: Any, field_name: str = "username") -> str:
     return text
 
 
+def _validate_password_strength(value: str) -> str:
+    if not any(c.isupper() for c in value):
+        raise ValueError("password must contain at least one uppercase letter.")
+    if not any(c.islower() for c in value):
+        raise ValueError("password must contain at least one lowercase letter.")
+    if not any(c.isdigit() for c in value):
+        raise ValueError("password must contain at least one digit.")
+    return value
+
+
 class BuyerRegisterRequest(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
@@ -108,6 +118,11 @@ class BuyerRegisterRequest(BaseModel):
     @classmethod
     def validate_phone(cls, value: str | None) -> str | None:
         return _validate_phone(value)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, value: str) -> str:
+        return _validate_password_strength(value)
 
     @model_validator(mode="after")
     def validate_contact_method(self) -> "BuyerRegisterRequest":
@@ -179,6 +194,11 @@ class SellerRegisterRequest(BaseModel):
     def validate_phone(cls, value: str) -> str:
         return _validate_phone(value) or value
 
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, value: str) -> str:
+        return _validate_password_strength(value)
+
 
 class RoleLoginRequest(BaseModel):
     model_config = ConfigDict(
@@ -204,6 +224,11 @@ class RoleLoginRequest(BaseModel):
     def normalize_identifier(cls, value: Any) -> str:
         return _strip_required(value, "identifier")
 
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, value: str) -> str:
+        return _validate_password_strength(value)
+
 
 class AdminLoginRequest(BaseModel):
     model_config = ConfigDict(
@@ -224,6 +249,11 @@ class AdminLoginRequest(BaseModel):
     @classmethod
     def normalize_username(cls, value: Any) -> str:
         return _strip_required(value, "username")
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, value: str) -> str:
+        return _validate_password_strength(value)
 
 
 class AuthTokenResponse(BaseModel):
@@ -270,6 +300,11 @@ class PasswordResetTicket(BaseModel):
 class PasswordResetConfirmRequest(BaseModel):
     reset_token: str = Field(min_length=20)
     new_password: str = Field(min_length=8, max_length=128)
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_password_strength(cls, value: str) -> str:
+        return _validate_password_strength(value)
 
 
 class PasswordResetConfirmResponse(BaseModel):

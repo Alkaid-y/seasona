@@ -75,7 +75,7 @@
                 </article>
                 <article class="seller-metric">
                   <span>待结算</span>
-                  <strong>{{ money(earnings?.pending_settlement_amount) }}</strong>
+                  <strong>{{ moneyYen(earnings?.pending_settlement_amount) }}</strong>
                   <small>{{ earnings?.pending_order_count || 0 }} 笔订单</small>
                 </article>
               </div>
@@ -538,7 +538,7 @@
                   <div v-else class="seller-product-row__blank">图</div>
                   <div>
                     <strong>{{ product.name }}</strong>
-                    <span>{{ product.category_name || '未命名分类' }} · {{ money(product.min_price) }} 起</span>
+                    <span>{{ product.category_name || '未命名分类' }} · {{ moneyYen(product.min_price) }} 起</span>
                     <small>
                       {{ product.stock_total ?? 0 }} 件可售
                       <span class="seller-status-pill seller-status-pill--compact" :class="statusClass(product.status)">
@@ -574,7 +574,7 @@
                 <article v-for="order in filteredSellerOrders" :key="order.id" class="seller-order-row">
                   <div>
                     <strong>{{ order.order_no }}</strong>
-                    <span>{{ orderStatusLabel(order) }} · {{ money(order.payable_amount) }}</span>
+                    <span>{{ orderStatusLabel(order) }} · {{ moneyYen(order.payable_amount) }}</span>
                     <small>{{ formatDate(order.created_at) }}</small>
                   </div>
                   <span class="status-pill" :class="orderStatusClass(order)">
@@ -592,7 +592,7 @@
               <div class="seller-metrics-grid seller-metrics-grid--wallet">
                 <article class="seller-metric">
                   <span>待结算</span>
-                  <strong>{{ money(earnings?.pending_settlement_amount) }}</strong>
+                  <strong>{{ moneyYen(earnings?.pending_settlement_amount) }}</strong>
                   <small>{{ earnings?.pending_order_count || 0 }} 笔订单等待确认收货</small>
                 </article>
                 <article class="seller-metric seller-metric--with-action">
@@ -600,7 +600,7 @@
                     <span>总收益</span>
                     <RouterLink class="seller-ghost-button seller-metric__link" to="/seller/wallet-ledger">流水</RouterLink>
                   </div>
-                  <strong>{{ money(sellerTotalRevenue) }}</strong>
+                  <strong>{{ moneyYen(sellerTotalRevenue) }}</strong>
                   <small>已结算与待结算合计</small>
                 </article>
               </div>
@@ -818,6 +818,7 @@ import FloatingFeedback from '../components/layout/FloatingFeedback.vue'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { useAuthStore } from '../stores/auth'
 import { orderMatchesDisplayFilter, orderStatusClass, orderStatusText } from '../utils/orderDisplay'
+import { moneyYen } from '../utils/format'
 
 let localSkuId = 0
 
@@ -1901,10 +1902,6 @@ function productStatusLabel(value) {
 
 function orderStatusLabel(order) {
   return orderStatusText(order, 'seller')
-}
-
-function money(value) {
-  return `¥ ${Number(value || 0).toFixed(2)}`
 }
 
 function formatDate(value) {

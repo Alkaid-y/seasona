@@ -142,6 +142,7 @@ import { apiErrorMessage, mediaUrl } from '../api/http'
 import { listBuyerReviewDrafts, listBuyerReviews } from '../api/buyer'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
+import { stars } from '../utils/rating'
 import { formatReviewTime } from '../utils/date'
 
 const SEEN_REPLY_KEY = 'seasona_seen_review_replies'
@@ -202,10 +203,6 @@ function hasUnreadReply(review) {
   return Boolean(review?.has_seller_reply) && !seenReplyKeys.value.has(replySeenKey(review))
 }
 
-function stars(rating) {
-  const score = Math.max(0, Math.min(5, Number(rating || 0)))
-  return `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`
-}
 
 function reviewMeta(review) {
   return formatReviewTime(review?.created_at)

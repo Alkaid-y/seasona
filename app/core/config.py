@@ -106,11 +106,26 @@ class Settings(BaseModel):
 
     cors_origins: list[str] = []
 
+    trusted_proxy_cidrs: list[str] = []
+
+
+def _validate_settings(settings: Settings) -> None:
+    if settings.environment == "test":
+        return
+    if not settings.jwt_secret_key:
+        raise ValueError(
+            "SEASONA_JWT_SECRET_KEY must be set for non-test environments."
+        )
+    if len(settings.jwt_secret_key) < 32:
+        raise ValueError(
+            "SEASONA_JWT_SECRET_KEY must be at least 32 characters long."
+        )
+
 
 @lru_cache
 def get_settings() -> Settings:
     _load_env_file(DEFAULT_ENV_FILE)
-    return Settings(
+    settings = Settings(
         app_name=_env("SEASONA_APP_NAME", "Seasona"),
         app_version=_env("SEASONA_APP_VERSION", "0.1.0"),
         environment=_env("SEASONA_ENVIRONMENT", "local"),
@@ -175,4 +190,7 @@ def get_settings() -> Settings:
         media_url_prefix=_env("SEASONA_MEDIA_URL_PREFIX", "/media"),
         max_upload_size_mb=_env_int("SEASONA_MAX_UPLOAD_SIZE_MB", 8),
         cors_origins=_env_csv("SEASONA_CORS_ORIGINS"),
+        trusted_proxy_cidrs=_env_csv("SEASONA_TRUSTED_PROXY_CIDRS"),
     )
+    _validate_settings(settings)
+    return settings

@@ -131,6 +131,7 @@ import { apiErrorMessage, mediaUrl } from '../api/http'
 import { createReviewComment, deleteReview, deleteReviewComment, getReviewDetail, likeReview, unlikeReview } from '../api/products'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
+import { stars } from '../utils/rating'
 import { formatReviewTime } from '../utils/date'
 
 const route = useRoute()
@@ -181,10 +182,6 @@ function reviewMeta(item) {
   return formatReviewTime(item?.created_at)
 }
 
-function stars(rating) {
-  const score = Math.max(0, Math.min(5, Number(rating || 0)))
-  return `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`
-}
 
 function selectReplyTarget(comment) {
   if (comment.author_role === 'seller') return

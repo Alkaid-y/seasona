@@ -19,7 +19,7 @@
           <h1>收益流水</h1>
           <p>这里只展示已经实际入账或实际退款支出的记录，不包含待结算金额。</p>
         </div>
-        <strong>本页净额 {{ money(totalIncome) }}</strong>
+        <strong>本页净额 {{ moneyYen(totalIncome) }}</strong>
       </section>
 
       <p v-if="message" class="form-message form-message--error">{{ message }}</p>
@@ -47,6 +47,7 @@ import { apiErrorMessage } from '../api/http'
 import { listSellerWalletLedger } from '../api/seller'
 import WalletLedgerList from '../components/wallet/WalletLedgerList.vue'
 import { useAuthStore } from '../stores/auth'
+import { moneyYen } from '../utils/format'
 
 const LEDGER_PAGE_SIZE = 30
 
@@ -61,10 +62,6 @@ const message = ref('')
 const totalIncome = computed(() => {
   return ledgerItems.value.reduce((sum, item) => sum + Number(item.signed_amount || 0), 0)
 })
-
-function money(value) {
-  return `¥ ${Number(value || 0).toFixed(2)}`
-}
 
 async function loadLedger(page = ledgerPage.value) {
   ledgerLoading.value = true

@@ -130,6 +130,7 @@ import {
   normalizeAddressRegion,
   provinceOptions,
 } from '../utils/address'
+import { money } from '../utils/format'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -159,10 +160,6 @@ const extraCount = computed(() => Math.max(0, (draft.value?.items?.length || 0) 
 const totalAmount = computed(() => Number(draft.value?.total_amount || 0))
 const receiverCityList = computed(() => cityOptionsForProvince(receiver.province))
 const isReceiverProvinceLevel = computed(() => isProvinceLevelRegion(receiver.province))
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 const checkoutBackLink = computed(() => {
   if (draft.value?.mode !== 'direct') return '/cart'

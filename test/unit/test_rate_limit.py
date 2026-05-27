@@ -10,6 +10,7 @@ from app.core.rate_limit import (
     RATE_LIMIT_PREFIX,
     RateLimitRule,
     auth_identifier_subject,
+    client_ip_from_request,
     consume_rate_limit,
     enforce_auth_rate_limit,
 )
@@ -111,3 +112,38 @@ def test_auth_identifier_subject_hashes_sensitive_values() -> None:
     assert first == second
     assert "buyer@example.com" not in first
     assert "Buyer@Example.COM" not in first
+
+
+def test_client_ip_ignores_x_forwarded_for_without_trusted_proxy() -> None:
+    request = SimpleNamespace(
+        headers={"x-forwarded-for": "1.2.3.4"},
+        client=SimpleNamespace(host="5.6.7.8"),
+    )
+    settings = Settings(trusted_proxy_cidrs=[])
+    assert client_ip_from_request(request, settings) == "5.6.7.8"
+
+
+def test_client_ip_uses_x_forwarded_for_from_trusted_proxy() -> None:
+    request = SimpleNamespace(
+        headers={"x-forwarded-for": "1.2.3.4, 10.0.0.1"},
+        client=SimpleNamespace(host="10.0.0.1"),
+    )
+    settings = Settings(trusted_proxy_cidrs=["10.0.0.0/8"])
+    assert client_ip_from_request(request, settings) == "1.2.3.4"
+
+
+def test_client_ip_ignores_x_forwarded_for_from_untrusted_proxy() -> None:
+    request = SimpleNamespace(
+        headers={"x-forwarded-for": "1.2.3.4"},
+        client=SimpleNamespace(host="99.88.77.66"),
+    )
+    settings = Settings(trusted_proxy_cidrs=["10.0.0.0/8"])
+    assert client_ip_from_request(request, settings) == "99.88.77.66"
+
+
+def test_client_ip_falls_back_to_direct_host_without_settings() -> None:
+    request = SimpleNamespace(
+        headers={"x-forwarded-for": "1.2.3.4"},
+        client=SimpleNamespace(host="5.6.7.8"),
+    )
+    assert client_ip_from_request(request) == "5.6.7.8"

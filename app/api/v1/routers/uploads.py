@@ -13,6 +13,35 @@ router = APIRouter()
 
 _ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 
+_MAGIC_SIGNATURES: dict[str, list[bytes]] = {
+    "image/jpeg": [b"\xff\xd8\xff"],
+    "image/png": [b"\x89PNG\r\n\x1a\n"],
+    "image/webp": [b"RIFF"],
+    "image/gif": [b"GIF87a", b"GIF89a"],
+}
+
+
+def _verify_image_magic_bytes(data: bytes, content_type: str) -> None:
+    signatures = _MAGIC_SIGNATURES.get(content_type)
+    if not signatures:
+        return
+    if len(data) < 12:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file is too small to be a valid image.",
+        )
+    if content_type == "image/webp":
+        if not (data[:4] == b"RIFF" and data[8:12] == b"WEBP"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File content does not match the declared image type.",
+            )
+    elif not any(data.startswith(sig) for sig in signatures):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File content does not match the declared image type.",
+        )
+
 try:
     import multipart  # type: ignore  # noqa: F401
 
@@ -56,6 +85,7 @@ if _MULTIPART_AVAILABLE:
                 status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                 detail=f"Image exceeds {settings.max_upload_size_mb} MB.",
             )
+        _verify_image_magic_bytes(data, content_type)
 
         suffix = _extension_from_content_type(content_type)
         filename = f"{uuid4().hex}{suffix}"

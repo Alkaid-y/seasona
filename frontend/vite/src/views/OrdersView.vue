@@ -66,6 +66,7 @@ import { listBuyerOrders } from '../api/buyer'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { orderMatchesDisplayFilter, orderStatusClass, orderStatusText, orderTitle } from '../utils/orderDisplay'
+import { money } from '../utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -97,10 +98,6 @@ const emptyText = computed(() => {
   const label = tabs.find((item) => item.value === activeTab.value)?.label || '当前分类'
   return activeTab.value === 'all' ? '你还没有订单，去商城看看吧。' : `${label}分类下暂无订单。`
 })
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 function deliveryText(order) {
   if (['pending', 'approved'].includes(order.active_refund_status)) return '退款申请正在处理中'

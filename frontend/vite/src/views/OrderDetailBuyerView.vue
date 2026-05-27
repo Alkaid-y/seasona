@@ -103,6 +103,7 @@ import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { orderStatusClass, orderStatusText, refundStatusText } from '../utils/orderDisplay'
 import { formatSkuDisplay } from '../utils/sku'
 import { formatAddressLine } from '../utils/address'
+import { money } from '../utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -155,10 +156,6 @@ const statusNotices = computed(() => {
   }
   return notices
 })
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 function goBack() {
   const value = Array.isArray(route.query.from) ? route.query.from[0] : route.query.from

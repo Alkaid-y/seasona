@@ -271,7 +271,8 @@ import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { formatSkuDisplay, formatSpecAttrs } from '../utils/sku'
-import { formatRating, hasRating, ratingToneClass } from '../utils/rating'
+import { formatRating, hasRating, ratingToneClass, stars } from '../utils/rating'
+import { displayReviewName } from '../utils/format'
 import { formatReviewTime } from '../utils/date'
 import FloatingFeedback from '../components/layout/FloatingFeedback.vue'
 
@@ -393,15 +394,6 @@ function reviewMeta(review) {
   return formatReviewTime(review?.created_at)
 }
 
-function stars(rating) {
-  const score = Math.max(0, Math.min(5, Number(rating || 0)))
-  return `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`
-}
-
-function displayReviewName(review) {
-  const name = review?.buyer_nickname || review?.buyer_username || '买家'
-  return name.length > 10 ? `${name.slice(0, 10)}*` : name
-}
 
 function openReviewDetail(review) {
   router.push({
