@@ -257,7 +257,7 @@
                     <h2>{{ selectedProduct.name }}</h2>
                     <span>分类：{{ selectedProduct.category_name || '未命名分类' }}</span>
                     <span>店铺：{{ selectedProduct.merchant_shop_name || '未知商家' }}</span>
-                    <small>{{ money(selectedProduct.min_price) }} 起 · 库存 {{ selectedProduct.stock_total ?? 0 }}</small>
+                    <small>{{ moneyYen(selectedProduct.min_price) }} 起 · 库存 {{ selectedProduct.stock_total ?? 0 }}</small>
                   </div>
                 </div>
               <p class="admin-detail-post__text">{{ selectedProduct.description || '商家没有填写商品描述。' }}</p>
@@ -274,7 +274,7 @@
               <div v-if="selectedProduct.skus?.length" class="admin-sku-grid">
                 <article v-for="sku in selectedProduct.skus" :key="sku.id || sku.sku_id">
                   <strong>{{ sku.spec_name }}</strong>
-                  <span>{{ money(sku.price) }} / {{ sku.unit }}</span>
+                  <span>{{ moneyYen(sku.price) }} / {{ sku.unit }}</span>
                   <small>可售 {{ sku.stock_available }}，锁定 {{ sku.stock_locked }}</small>
                 </article>
               </div>
@@ -480,6 +480,7 @@ import { apiErrorMessage, mediaUrl } from '../api/http'
 import FloatingFeedback from '../components/layout/FloatingFeedback.vue'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { useAuthStore } from '../stores/auth'
+import { moneyYen } from '../utils/format'
 
 const PAGE_SIZE = 12
 
@@ -1119,10 +1120,6 @@ function disputeStatusLabel(status) {
     approved: '已支持买家',
     rejected: '已驳回争议',
   }[status] || status || '未知'
-}
-
-function money(value) {
-  return `¥ ${Number(value || 0).toFixed(2)}`
 }
 
 function formatDate(value) {

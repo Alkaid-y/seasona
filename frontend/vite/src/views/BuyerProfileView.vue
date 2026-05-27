@@ -99,6 +99,7 @@ import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { orderDisplayState, orderMatchesDisplayFilter, orderStatusClass, orderStatusText, orderTitle } from '../utils/orderDisplay'
+import { money } from '../utils/format'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -124,10 +125,6 @@ const avatarSrc = computed(() => mediaUrl(user.value.avatar_url || ''))
 function truncateText(text, limit) {
   if (!text) return ''
   return text.length > limit ? `${text.slice(0, limit)}*` : text
-}
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
 }
 
 function orderDetailLink(order) {

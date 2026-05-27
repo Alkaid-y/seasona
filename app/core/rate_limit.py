@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import ipaddress
 import logging
 from typing import Any
 
@@ -31,12 +32,30 @@ def _hash_value(value: str) -> str:
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
-def client_ip_from_request(request: Request) -> str:
+def _is_trusted_proxy(host: str, trusted_cidrs: list[str]) -> bool:
+    if not trusted_cidrs:
+        return False
+    try:
+        addr = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    for cidr in trusted_cidrs:
+        try:
+            if addr in ipaddress.ip_network(cidr.strip(), strict=False):
+                return True
+        except ValueError:
+            continue
+    return False
+
+
+def client_ip_from_request(request: Request, settings: Settings | None = None) -> str:
+    direct_host = request.client.host if request.client else None
     forwarded_for = request.headers.get("x-forwarded-for", "")
-    if forwarded_for:
-        return forwarded_for.split(",", 1)[0].strip() or "unknown"
-    if request.client and request.client.host:
-        return request.client.host
+    if forwarded_for and settings and direct_host:
+        if _is_trusted_proxy(direct_host, settings.trusted_proxy_cidrs):
+            return forwarded_for.split(",", 1)[0].strip() or "unknown"
+    if direct_host:
+        return direct_host
     return "unknown"
 
 
@@ -79,7 +98,7 @@ def enforce_auth_rate_limit(
 
     rules = [
         RateLimitRule(
-            subject=auth_ip_subject(scope, client_ip_from_request(request)),
+            subject=auth_ip_subject(scope, client_ip_from_request(request, settings)),
             limit=ip_limit,
             window_seconds=settings.auth_rate_limit_window_seconds,
         )

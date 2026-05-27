@@ -53,6 +53,7 @@ import { apiErrorMessage } from '../api/http'
 import WalletLedgerList from '../components/wallet/WalletLedgerList.vue'
 import { useAuthStore } from '../stores/auth'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
+import { money } from '../utils/format'
 
 const LEDGER_PAGE_SIZE = 30
 
@@ -68,10 +69,6 @@ const ledgerLoading = ref(false)
 const message = ref('')
 const messageType = ref('info')
 const showPageLoading = useDelayedBusy(pageLoading)
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 async function loadWallet() {
   wallet.value = await getBuyerWallet()

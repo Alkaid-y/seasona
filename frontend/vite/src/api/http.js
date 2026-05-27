@@ -13,6 +13,20 @@ http.interceptors.request.use((config) => {
   return config
 })
 
+http.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401) {
+      window.localStorage.removeItem('seasona_token')
+      window.localStorage.removeItem('seasona_role')
+      if (!window.location.pathname.startsWith('/auth')) {
+        window.location.href = '/auth'
+      }
+    }
+    return Promise.reject(error)
+  },
+)
+
 export function mediaUrl(value) {
   if (!value) return ''
   if (/^(https?:|blob:|data:)/.test(value)) return value
@@ -88,6 +102,9 @@ const API_MESSAGE_TRANSLATIONS = [
   ['phone must contain only digits', '手机号只能包含数字'],
   ['email must contain @', '邮箱格式不正确'],
   ['String should have at least 8 characters', '密码至少需要 8 位'],
+  ['password must contain at least one uppercase letter', '密码需包含至少一个大写字母'],
+  ['password must contain at least one lowercase letter', '密码需包含至少一个小写字母'],
+  ['password must contain at least one digit', '密码需包含至少一个数字'],
   ['Request validation failed', '提交内容格式不正确，请检查填写内容'],
 
   ['Wallet balance limit exceeded', '钱包余额已达到上限，不能继续充值'],

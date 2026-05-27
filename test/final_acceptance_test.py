@@ -33,7 +33,7 @@ Session = get_session_factory()
 client = TestClient(app, raise_server_exceptions=False)
 stamp = datetime.now().strftime("%Y%m%d%H%M%S")
 prefix = f"final{stamp}"
-password = "password123"
+password = "Password123"
 results: list[dict] = []
 external_notes: list[tuple] = []
 ids: dict[str, int] = {}

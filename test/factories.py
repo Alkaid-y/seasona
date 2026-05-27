@@ -26,7 +26,7 @@ class BuyerRegisterRequestFactory(ModelFactory[BuyerRegisterRequest]):
     __model__ = BuyerRegisterRequest
 
     username = "BuyerFactory1"
-    password = "password123"
+    password = "Password123"
     register_method = RegisterMethod.PHONE
     phone = "13800009999"
     email = None
@@ -40,7 +40,7 @@ class SellerRegisterRequestFactory(ModelFactory[SellerRegisterRequest]):
     username = "SellerFactory1"
     contact_name = "Owner"
     phone = "13900009999"
-    password = "password123"
+    password = "Password123"
     email = "seller.factory@example.com"
     shop_description = "factory seller"
 

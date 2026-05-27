@@ -55,16 +55,13 @@ import { listCheckoutPayments } from '../api/buyer'
 import { apiErrorMessage } from '../api/http'
 import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { useAuthStore } from '../stores/auth'
+import { money } from '../utils/format'
 
 const auth = useAuthStore()
 const payments = ref([])
 const loading = ref(false)
 const message = ref('')
 const showLoading = useDelayedBusy(loading)
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 function paymentTitle(payment) {
   const title = payment.primary_product_name || payment.orders?.[0]?.primary_product_name || payment.payment_no

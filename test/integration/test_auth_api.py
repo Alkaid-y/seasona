@@ -31,7 +31,7 @@ def test_buyer_register_login_me_and_logout_flow(app_client, db_session) -> None
 
     login_response = app_client.post(
         "/api/v1/auth/buyer/login",
-        json={"identifier": "13800000001", "password": "password123"},
+        json={"identifier": "13800000001", "password": "Password123"},
     )
     assert login_response.status_code == 200
 
@@ -71,7 +71,7 @@ def test_seller_registration_creates_draft_merchant_profile(app_client, db_sessi
 def test_duplicate_buyer_identifier_is_rejected(app_client) -> None:
     payload = {
         "username": "BuyerDup1",
-        "password": "password123",
+        "password": "Password123",
         "register_method": "email",
         "email": "dup@example.com",
     }

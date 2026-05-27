@@ -12,3 +12,8 @@ export function ratingToneClass(value) {
   if (score >= 3) return 'rating-score--mid'
   return 'rating-score--low'
 }
+
+export function stars(rating) {
+  const score = Math.max(0, Math.min(5, Number(rating || 0)))
+  return `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`
+}

@@ -101,6 +101,7 @@ import { useDelayedBusy } from '../composables/useDelayedBusy'
 import { formatAddressLine } from '../utils/address'
 import { orderStatusClass, orderStatusText, orderTitle } from '../utils/orderDisplay'
 import { formatSkuDisplay } from '../utils/sku'
+import { money } from '../utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -138,10 +139,6 @@ const paymentHint = computed(() => {
   if (payment.value?.status === 'EXPIRED') return '支付单已超时，锁定库存已释放。'
   return '支付单已取消，锁定库存已释放。'
 })
-
-function money(value) {
-  return Number(value || 0).toFixed(2)
-}
 
 function dateText(value) {
   return value ? new Date(value).toLocaleString() : ''

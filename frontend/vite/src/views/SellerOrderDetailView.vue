@@ -26,7 +26,7 @@
           <div>
             <span class="section-kicker">Order</span>
             <h1>{{ order.order_no }}</h1>
-            <p>{{ orderStatusLabel(order) }} · {{ money(order.payable_amount) }}</p>
+            <p>{{ orderStatusLabel(order) }} · {{ moneyYen(order.payable_amount) }}</p>
           </div>
           <span class="status-pill" :class="orderStatusClass(order)">
             {{ orderStatusLabel(order) }}
@@ -86,9 +86,9 @@
             <div>
               <strong>{{ item.product_name_snapshot }}</strong>
               <span>{{ itemSku(item) }} × {{ item.quantity }}</span>
-              <small>单价 {{ money(item.unit_price) }}</small>
+              <small>单价 {{ moneyYen(item.unit_price) }}</small>
             </div>
-            <b>{{ money(item.total_amount) }}</b>
+            <b>{{ moneyYen(item.total_amount) }}</b>
           </article>
         </div>
       </section>
@@ -120,6 +120,7 @@ import { useAuthStore } from '../stores/auth'
 import { orderStatusClass, orderStatusText, refundStatusText } from '../utils/orderDisplay'
 import { formatSkuDisplay } from '../utils/sku'
 import { formatAddressLine } from '../utils/address'
+import { moneyYen } from '../utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -149,10 +150,6 @@ function setMessage(text, type = 'info') {
 
 function goBack() {
   router.push('/seller?panel=orders')
-}
-
-function money(value) {
-  return `¥ ${Number(value || 0).toFixed(2)}`
 }
 
 function itemSku(item) {
